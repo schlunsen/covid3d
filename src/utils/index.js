@@ -11,6 +11,7 @@ export async function request(url) {
 }
 
 export async function getCoordinates() {
+  return {"country_code":"ES","country_name":"Spain","city":"Sant Cugat del Vall\u00e8s","postal":"08171","latitude":41.4714,"longitude":2.0818,"IPv4":"2.155.49.165","state":"Barcelona"}
   try {
     const { latitude, longitude } = await request(
       'https://geolocation-db.com/json/'

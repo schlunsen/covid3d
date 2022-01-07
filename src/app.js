@@ -81,11 +81,11 @@ const slider = document.querySelector('.slider');
 // Slider date
 const sliderDate = document.querySelector('.slider-date');
 
-function polygonFromCenter(center, radius=0.5, num=10) {
+function polygonFromCenter(center, radius = 0.5, num = 10) {
   let coords = [];
   for (let i = 0; i < num; i++) {
-    const dx = radius*Math.cos(2*Math.PI*i/num);
-    const dy = radius*Math.sin(2*Math.PI*i/num);
+    const dx = radius * Math.cos((2 * Math.PI * i) / num);
+    const dy = radius * Math.sin((2 * Math.PI * i) / num);
     coords.push([center[0] + dx, center[1] + dy]);
   }
   return [coords];
@@ -103,20 +103,30 @@ async function getCases() {
   // featureCollection = featureCollection.concat(featureCollection2);
 
   // world.polygonsData(countriesWithCovid);
-  document.querySelector('.title-desc').innerHTML =
-    'Hover on a country or territory to see cases, deaths, and recoveries.';
+  // document.querySelector('.title-desc').innerHTML =
+  //   'Hover on a country or territory to see cases, deaths, and recoveries.';
 
   dates = Object.keys(countries.China);
 
   // Set slider values
-  slider.max = dates.length - 1;
-  slider.value = dates.length - 1;
+  // slider.max = dates.length - 1;
+  // slider.value = dates.length - 1;
 
-  slider.disabled = false;
-  playButton.disabled = false;
+  // slider.disabled = false;
+  // playButton.disabled = false;
 
-  updateCounters();
-  updatePolygonsData();
+  //updateCounters();
+  setTimeout(() => {
+    updatePolygonsData();  
+    world.pointOfView(
+      {
+        lat: 0,
+        lng: 0,
+      },
+      10000
+    );
+  }, 3000);
+  
 
   updatePointOfView();
 }
@@ -154,9 +164,9 @@ function updatePolygonsData() {
     const country = featureCollection[x].properties.NAME;
     if (countries[country]) {
       featureCollection[x].covidData = {
-        confirmed: countries[country][dates[slider.value]].confirmed,
-        deaths: countries[country][dates[slider.value]].deaths,
-        recoveries: countries[country][dates[slider.value]].recoveries,
+        confirmed: 0,
+        deaths: 0,
+        recoveries: 0
       };
     } else {
       featureCollection[x].covidData = {
@@ -190,45 +200,6 @@ async function updatePointOfView() {
 }
 
 let interval;
-
-playButton.addEventListener('click', () => {
-  if (playButton.innerText === 'Play') {
-    playButton.innerText = 'Pause';
-  } else {
-    playButton.innerText = 'Play';
-    clearInterval(interval);
-    return;
-  }
-
-  // Check if slider position is max
-  if (+slider.value === dates.length - 1) {
-    slider.value = 0;
-  }
-
-  sliderDate.innerHTML = dates[slider.value];
-
-  interval = setInterval(() => {
-    slider.value++;
-    sliderDate.innerHTML = dates[slider.value];
-    updateCounters();
-    updatePolygonsData();
-    if (+slider.value === dates.length - 1) {
-      playButton.innerHTML = 'Play';
-      clearInterval(interval);
-    }
-  }, 200);
-});
-
-if ('oninput' in slider) {
-  slider.addEventListener(
-    'input',
-    function () {
-      updateCounters();
-      updatePolygonsData();
-    },
-    false
-  );
-}
 
 // Responsive globe
 window.addEventListener('resize', (event) => {
